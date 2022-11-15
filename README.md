@@ -28,16 +28,54 @@ v18.12.1
 ./go.sh
 ```
 
+Once inside the container, set `AWS_PROFILE` unless you changed it in `docker-compose.yml`.
+
+It's generally easiest to get AWS credentials outside of the container and use `docker-compose` environment variables to control which AWS profile you are using.
+
+## Use an Example CDKTF Project...
+
+### ...Using a Pre-built Provider 
+
+Do all these steps in a shell inside the `cdktf` container.
+
+```
+export PIPENV_VENV_IN_PROJECT=true
+
+cd example-prebuilt-provider
+
+pipenv install --ignore-pipfile
+
+cdktf deploy        ### or cdktf synth
+
+```
+
+### ...Using a Locally-built Provider
+
+```
+export PIPENV_VENV_IN_PROJECT=true
+
+cd example-local-provider
+
+pipenv install --ignore-pipfile
+
+cdktf get           ### Takes a LONG time
+
+cdktf deploy        ### or cdktf synth
+
+```
+
 ## Create A New CDKTF Project
+
+Do all these steps in a shell inside the `cdktf` container.
 
 ### Make a Project Directory
 ```
-root@4a1779bfbb99:/mounted-files# mkdir example1
-root@4a1779bfbb99:/mounted-files# cd example1
+root@4a1779bfbb99:/mounted-files# mkdir example-prebuilt-provider
+root@4a1779bfbb99:/mounted-files# cd example-prebuilt-provider
 ```
 ### Customize `pipenv` Behavior
 
-This will force `pipenv` to create the virtual environment directory in the same directory as the project, instead of being tied to the current user.
+This will force `pipenv` to create the virtual environment directory in the same directory as the project, instead of being tied to the current user. This allows that directory to live across the lifespan of multiple containers on the same host.
 
 ```
 # export PIPENV_VENV_IN_PROJECT=true
@@ -46,7 +84,7 @@ This will force `pipenv` to create the virtual environment directory in the same
 ### Create the CDKTF Project
 ```
 # cdktf init --template python \
-    --project-name example1 \
+    --project-name example-prebuilt-provider \
     --project-description "Example 1" \
     --local \
     --enable-crash-reporting false
@@ -72,7 +110,7 @@ Add the AWS provider in `cdktf.json`. Set `terraformProviders` to `["aws"]`:
 # pipenv install cdktf-cdktf-provider-aws
 ```
 
-Alternatively, you can have CDKTF built the provider from scratch. This step will take many, many minutes...
+Alternatively, you can have CDKTF build the provider from scratch. This step will take many, many minutes...
 ```
 # cdktf get
 ```
@@ -103,10 +141,10 @@ class MyStack(TerraformStack):
 
         # define resources here
         AwsProvider(self, 'Aws', region='us-east-1')
-        SnsTopic(self, 'Topic', display_name='cdktf-example1-topic')
+        SnsTopic(self, 'Topic', display_name='cdktf-example-prebuilt-provider-topic')
 
 app = App()
-MyStack(app, "example1")
+MyStack(app, "example-prebuilt-provider")
 
 app.synth()
 ```

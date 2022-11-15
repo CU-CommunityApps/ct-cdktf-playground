@@ -23,10 +23,10 @@ class MyStack(TerraformStack):
 
         # define resources here
         AwsProvider(self, 'Aws', region='us-east-1')
-        SnsTopic(self, 'Topic', display_name='cdktf-example1-topic')
+        SnsTopic(self, 'Topic', display_name='cdktf-example-prebuilt-provider-topic')
 
 
 app = App()
-MyStack(app, "example1")
+MyStack(app, "example-prebuilt-provider")
 
 app.synth()
