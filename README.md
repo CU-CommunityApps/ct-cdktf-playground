@@ -9,13 +9,16 @@ Running CDKTF in Docker also generates some additional complexity that these exa
 ## Check Tool Versions
 
 ```
-root@4a1779bfbb99:/mounted-files# python --version
+# python --version
 Python 3.7.15
-root@4a1779bfbb99:/mounted-files# pipenv --version
+
+# pipenv --version
 pipenv, version 2022.11.11
-root@4a1779bfbb99:/mounted-files# node --version
+
+# node --version
 v18.12.1
-root@4a1779bfbb99:/mounted-files# cdktf --version
+
+# cdktf --version
 0.13.3
 ```
 
@@ -34,22 +37,27 @@ root@4a1779bfbb99:/mounted-files# cd example1
 ```
 ### Customize `pipenv` Behavior
 
+This will force `pipenv` to create the virtual environment directory in the same directory as the project, instead of being tied to the current user.
+
 ```
-root@4a1779bfbb99:/mounted-files/example1# export PIPENV_VENV_IN_PROJECT=true
+# export PIPENV_VENV_IN_PROJECT=true
 ```
 
 ### Create the CDKTF Project
 ```
-cdktf init --template python \
+# cdktf init --template python \
     --project-name example1 \
     --project-description "Example 1" \
     --local \
     --enable-crash-reporting false
 
 ```
-### Install a Pre-built Provider
+
+### Change File Ownership
+
+Change project file ownership so files can be more easily edited outside of the container.
 ```
-pipenv install cdktf-cdktf-provider-aws
+# chown 1000:1000 * .*
 ```
 
 ### Add a Provider to `cdktf.json`
@@ -59,11 +67,14 @@ Add the AWS provider in `cdktf.json`. Set `terraformProviders` to `["aws"]`:
   "terraformProviders": ["aws"],
 ```
 
-### Change File Ownership
-
-Change project file ownership so they can be more easily edited outside of the container.
+### Install a Pre-built Provider
 ```
-chown 1000:1000 * .*
+# pipenv install cdktf-cdktf-provider-aws
+```
+
+Alternatively, you can have CDKTF built the provider from scratch. This step will take many, many minutes...
+```
+# cdktf get
 ```
 
 ### Edit `main.py`
@@ -103,12 +114,12 @@ app.synth()
 ### Deploy the Resources
 
 ```
-cdktf deploy
+# cdktf deploy
 ```
 
 
 ### Destroy the Resources
 
 ```
-cdktf destroy
+# cdktf destroy
 ```
