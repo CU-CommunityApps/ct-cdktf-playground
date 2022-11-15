@@ -1,0 +1,29 @@
+version: "3"
+services:
+  cdktf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+        USER_NAME: ${USER}
+    container_name: cdktf
+    environment:
+      - AWS_PROFILE=change_me
+      - AWS_DEFAULT_REGION=us-east-1
+      - SSH_AUTH_SOCK=/ssh-agent-sock
+    networks:
+      - default
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/mounted-files
+      - ${HOME}/.aws:/home/${USER}/.aws
+      - ${HOME}/.aws:/root/.aws
+      - ${SSH_AUTH_SOCK}:/ssh-agent-sock
+    working_dir: "/mounted-files"
+    user: root
+networks:
+  default:
+    driver: "bridge"
