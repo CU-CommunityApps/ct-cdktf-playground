@@ -1,4 +1,4 @@
-# cdktf-playground
+# ct-cdktf-playground
 
 Terraform CDK examples and configuration to run `cdktf` in Docker containers.
 
@@ -34,9 +34,9 @@ It's generally easiest to get AWS credentials outside of the container and use `
 
 ## Use an Example CDKTF Project...
 
-### ...Using a Pre-built Provider 
-
 Do all these steps in a shell inside the `cdktf` container.
+
+### ...Using a Pre-built Provider 
 
 ```
 export PIPENV_VENV_IN_PROJECT=true
@@ -78,12 +78,12 @@ root@4a1779bfbb99:/mounted-files# cd example-prebuilt-provider
 This will force `pipenv` to create the virtual environment directory in the same directory as the project, instead of being tied to the current user. This allows that directory to live across the lifespan of multiple containers on the same host.
 
 ```
-# export PIPENV_VENV_IN_PROJECT=true
+$ export PIPENV_VENV_IN_PROJECT=true
 ```
 
 ### Create the CDKTF Project
 ```
-# cdktf init --template python \
+$ cdktf init --template python \
     --project-name example-prebuilt-provider \
     --project-description "Example 1" \
     --local \
@@ -95,24 +95,29 @@ This will force `pipenv` to create the virtual environment directory in the same
 
 Change project file ownership so files can be more easily edited outside of the container.
 ```
-# chown 1000:1000 * .*
+$ chown 1000:1000 * .*
 ```
 
-### Add a Provider to `cdktf.json`
+### Configure/Install a Provider
 
-Add the AWS provider in `cdktf.json`. Set `terraformProviders` to `["aws"]`:
+Use a pre-built provider or build one locally.
+
+#### Install a Pre-built Provider
+
+Alternatively, you can have CDKTF build the provider from scratch. This step will take many, many minutes.
+```
+$ pipenv install cdktf-cdktf-provider-aws
+```
+
+#### Build the Provider Locally
+
+1. Add the AWS provider in `cdktf.json`. Set `terraformProviders` to `["aws"]`:
 ```
   "terraformProviders": ["aws"],
 ```
-
-### Install a Pre-built Provider
+2. Install the provider. CDKTF will build the provider from scratch. This step will take many, many minutes...
 ```
-# pipenv install cdktf-cdktf-provider-aws
-```
-
-Alternatively, you can have CDKTF build the provider from scratch. This step will take many, many minutes...
-```
-# cdktf get
+$ cdktf gets
 ```
 
 ### Edit `main.py`
@@ -141,10 +146,10 @@ class MyStack(TerraformStack):
 
         # define resources here
         AwsProvider(self, 'Aws', region='us-east-1')
-        SnsTopic(self, 'Topic', display_name='cdktf-example-prebuilt-provider-topic')
+        SnsTopic(self, 'Topic', display_name='cdktf-example-topic')
 
 app = App()
-MyStack(app, "example-prebuilt-provider")
+MyStack(app, "example")
 
 app.synth()
 ```
@@ -152,12 +157,11 @@ app.synth()
 ### Deploy the Resources
 
 ```
-# cdktf deploy
+$ cdktf deploy
 ```
-
 
 ### Destroy the Resources
 
 ```
-# cdktf destroy
+$ cdktf destroy
 ```

@@ -3,7 +3,7 @@
   "app": "pipenv run python main.py",
   "projectId": "b4ba22b5-c026-48c6-b113-948e15902562",
   "sendCrashReports": "false",
-  "terraformProviders": ["aws"],
+  "terraformProviders": [],
   "terraformModules": [],
   "codeMakerOutput": "imports",
   "context": {
