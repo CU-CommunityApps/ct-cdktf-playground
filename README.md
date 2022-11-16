@@ -98,18 +98,20 @@ Change project file ownership so files can be more easily edited outside of the 
 $ chown 1000:1000 * .*
 ```
 
-### Configure/Install a Provider
+### Configure/Install a Provider...
 
 Use a pre-built provider or build one locally.
 
-#### Install a Pre-built Provider
+#### ...Install a Pre-built Provider
+This is the easy way.
 
-Alternatively, you can have CDKTF build the provider from scratch. This step will take many, many minutes.
 ```
 $ pipenv install cdktf-cdktf-provider-aws
 ```
 
-#### Build the Provider Locally
+#### ...Build the Provider Locally
+
+Alternatively, you can have CDKTF build the provider from scratch.
 
 1. Add the AWS provider in `cdktf.json`. Set `terraformProviders` to `["aws"]`:
 ```
@@ -165,3 +167,6 @@ $ cdktf deploy
 ```
 $ cdktf destroy
 ```
+## Improvements
+
+- Use a regular user in the container, instead of root.
